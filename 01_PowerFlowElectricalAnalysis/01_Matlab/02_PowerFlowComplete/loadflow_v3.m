@@ -8,13 +8,15 @@
 %
 %	------------------------------------------------------------------------
 
-%clc
+
+
+%pneves: Limpa tela e as variáveis do workspace
 clear all
 
+
+
 %   grandezas globais
-
 tic; % iniciando contagem de tempo computacional
-
 fprintf('\n> ---------------------------------\n')
 fprintf('> Loadflow - v.3                   \n')
 fprintf('> Fluxo de carga - método de Newton\n')
@@ -56,7 +58,7 @@ for k = 1:nb
 	 numext(k)  = barras(k,1);
         tipo(k) = barras(k,2);
         v(k)    = barras(k,3);
-        ang(k)  = barras(k,4);% * graus_to_rad;
+        ang(k)  = barras(k,4) * graus_to_rad;
         pg(k)   = barras(k,5)/baseMVA;
         qg(k)   = barras(k,6)/baseMVA;
         pc(k)   = barras(k,7)/baseMVA;

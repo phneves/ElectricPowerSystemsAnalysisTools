@@ -8,14 +8,16 @@
 %
 %	------------------------------------------------------------------------
 
-%	Software utilizado (matlab/octave)
 
-software	=	'matlab';
+
+%	Software utilizado (matlab/octave)
+%software	=	'matlab';
 %software	=	'octave';
 
 %	Tolerância de convergência em pu
 
-tol		=	0.00001;
+%tol		=	0.000000000001;
+%tol		=	0.00001;
 
 %	Arquivo de dados da rede
 

@@ -43,12 +43,14 @@
 
 %O pacote a seguir gera um dummy text. Elimine a linha quando
 % for editar seu texto.
-\usepackage{lipsum}
+%\usepackage{lipsum}
 
 \usepackage{soul}
 \usepackage{cancel}
 \newcommand\tab[1][1cm]{\hspace*{#1}}
 \usepackage{amsmath}
+\usepackage{minted}
+\usepackage{booktabs}
 
 % Adicione o pacote a seguir, se seu texto tiver uma lista de 
 % símbolos. Não confunda com a lista de abreviaturas.
@@ -61,7 +63,7 @@
 %\autora{Nome da Autora}
 
 % Sempre deve haver um título em português:
-\titulo{IT306W - Primeiro Trabalho}
+\titulo{IT306W - Fluxo de carga completo}
 
 % Se a língua for o inglês ou o espanhol defina:
 %\title{The Dissertation or Thesis Title in English or Spanish for FT}
@@ -92,7 +94,7 @@
 %\cotutela{Universidade Nova de Plutão}
 
 %Defina a data da defesa no formato {Dia}{Mês}{Ano}
-\datadadefesa{28}{05}{2019}
+\datadadefesa{13}{05}{2020}
 
 % Para a versão final defina:
 % Repita o nome do Orientador(a) no primeiro avaliador
@@ -115,9 +117,27 @@
 % Sempre deve haver um resumo em português:
 \begin{resumo}
 
-Segundo trabalho apresentado \`a disciplina IT306.
+%Primeiro trabalho apresentado \`a disciplina IT306.\\\\\
+H\'a muitas d\'ecadas, a energia el\'etrica desempenha um papel vital na nossa sociedade. Desde necessidades mais simples, como ilumina\c{c}\~ao p\'ublica, at\'e necessidades mais complexas, como equipamentos m\'edicos e industrias inteiras, s\'o s\~ao fact\'iveis pois temos energia el\'etrica. E ela \'e est\'avel.\\
+Para que isso seja poss\'ivel, \'e necess\'ario alguma metodologia que nos forne\c{c}a o estado atual do sistema para que se possa, ent\~ao, atuar apropriadamente.\\
+Neste trabalho faremos um estudo sobre sobre fluxo de potência, uma metodologia que nos fornece tens\~oes nodais e angulos de fase.
+
+
 
 \end{resumo}
+
+
+% A lista de símbolos é opcional. Não confunda a lisa de símbolos
+% com a lista de abreviaturas.
+\input{listaSimbolos}
+
+% A lista de abreviações e siglas vem a seguir.
+% Dê uma olhada no pacote nomencl para ver os comandos para 
+% adicionar abreviações e siglas no texto.
+\renewcommand{\nomname}{Lista de Abreviações e Siglas}
+\printnomenclature[3cm]
+
+
 % O sumário vem aqui:
 \tableofcontents
 \fimdaspaginasiniciais
@@ -131,8 +151,6 @@ Segundo trabalho apresentado \`a disciplina IT306.
 %\include{introducao}
 
 
-
-
 \include{ex1}
 
 \include{ex2}
@@ -141,27 +159,9 @@ Segundo trabalho apresentado \`a disciplina IT306.
 
 \include{ex4}
 
-\include{ex5}
+%\include{ex5}
 
-\include{ex6}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+%\include{ex6}
 
 % Os comandos para incluir as referências bibliográficas
 \begin{singlespacing}

@@ -1,0 +1,19 @@
+\chapter{C\'odigo comentado}
+
+Iniciamos com limpeza das variáveis no \textit{workspace} e da tela.
+
+\begin{verbatim}
+clear all;
+    clc;
+\end{verbatim}
+
+\begin{minted}[mathescape, linenos]{matlab}
+if software ~= 'matlab' & software ~= 'octave'
+	fprintf('\n> Software (matlab/octave) especificado incorretamente.\n')
+    fprintf('  Ver arquivo <simulacao.m>.\n')
+    fprintf('> Execução interrompida.\n\n')
+    msgbox('Software (matlab/octave) especificado incorretamente. Ver arquivo <simulacao.m>. Execução interrompida.','Erro','error');
+        return
+end
+
+\end{minted}

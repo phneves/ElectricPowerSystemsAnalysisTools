@@ -66,11 +66,8 @@ cargasV		=	'nao';
 graus_to_rad = pi/180;
 rad_to_graus = 180/pi;
 
-%pneves: Enable debug prints.
-%pneves: Better to use breakpoints instead. Used here to didatic purposes
-%Debug = false;
+%pneves: Enable debug prints
 Debug = true;
-
 
 %%
 %	Determinacao do tamanho da rede
@@ -131,53 +128,42 @@ fprintf('\n> Executando cálculo de fluxo de carga ...\n')
 %pneves: prealocating matrix with zeros
 Y = zeros(nb,nb);
 
-if (Debug == true) 
-    fprintf('\n> DEBUG - Y with zeros\n'); 
-    Y
-    fprintf('\n> DEBUG  Y with bshk\n');
+if (Debug == true) fprintf('\n> DEBUG - Y with zeros\n'); Y
 end
 
+fprintf('\n> DEBUG  Y with bshk\n');
 for k = 1:nb
 	Y(k,k) = i*bshk(k); 
-
-    if (Debug == true) 
-        Y
+    if (Debug == true) Y
     end
 end
 
-if (Debug == true) 
-    fprintf('DEBUG> Y complete\n');
+
+if (Debug == true) fprintf('DEBUG> Y complete\n');
 end
 
 for l = 1:nr
-    k = de(l)
-    m = para(l)
+    k = de(l);
+    m = para(l);
 
-    y(l) = 1/(r(l) + i*x(l))
+    y(l) = 1/(r(l) + i*x(l));
 
-    akk(l) = 1/(tap(l)*tap(l))
-    amm(l) = 1.0
-    akm(l) = 1/tap(l)
+    akk(l) = 1/(tap(l)*tap(l));
+    amm(l) = 1.0;
+    akm(l) = 1/tap(l);
 
-    Y(k,k) = Y(k,k) + akk(l)*y(l) + i*bshl(l)
-    Y(m,m) = Y(m,m) + amm(l)*y(l) + i*bshl(l)
-    Y(k,m) = Y(k,m) - akm(l)*y(l)
-    Y(m,k) = Y(m,k) - akm(l)*y(l)
+    Y(k,k) = Y(k,k) + akk(l)*y(l) + i*bshl(l);
+    Y(m,m) = Y(m,m) + amm(l)*y(l) + i*bshl(l);
+    Y(k,m) = Y(k,m) - akm(l)*y(l);
+    Y(m,k) = Y(m,k) - akm(l)*y(l);
     
-    if (Debug == true) 
-        Y
+    if (Debug == true) Y
     end
 end
 
 G = real(Y);
 B = imag(Y);
 
-if (Debug == true) 
-    fprintf('DEBUG> Y, G and B complete\n');
-    Y
-    G
-    B
-end
 %%
 %	Definição do estado inicial da rede
 %	-> v = 1 pu para barras PQ

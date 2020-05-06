@@ -28,11 +28,15 @@ fprintf('> Carregando dados da simulação ...\n')
 %%
 %pneves: Some script configs
 
-%tol		=	0.000000000001; 
-tol		=	0.00001;
+%tol		=	0.001; 
+tol	=	0.000001;
+
+%addpath('/01_PowerFlowTestCases/');
 
 %   Arquivo de dados da rede
-P2GTD
+%P2GTD
+%RedePequena
+RedePequena2
 %Twobus
 %Fivebus
 %IEEE14
@@ -300,12 +304,12 @@ while abs(maxDP) > tol | abs(maxDQ) > tol
               L(m,k) = - v(m)*(G(k,m)*sin(ab)+B(k,m)*cos(ab)) ;
         end
 
-
-        J = [ H N ; M L ];
+        iter
+        J = [ H N ; M L ]
 
         %	Calcular o vetor de correção de estado
 
-        DV = inv(J)*DS;
+        DV = inv(J)*DS
 
         %	Atualizar estado
         v = v + DV(nb+1:2*nb)';

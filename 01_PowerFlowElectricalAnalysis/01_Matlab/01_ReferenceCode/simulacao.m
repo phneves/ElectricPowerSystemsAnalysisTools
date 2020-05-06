@@ -19,10 +19,10 @@ tol		=	0.00001;
 
 %	Arquivo de dados da rede
 
-P2GTD
+%P2GTD
 %Twobus
 %Fivebus
-%IEEE14
+IEEE14
 %rede_4barras
 %rede_6barras
 %ieee118_marina;

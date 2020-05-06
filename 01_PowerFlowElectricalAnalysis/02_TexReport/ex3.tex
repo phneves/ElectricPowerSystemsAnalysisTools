@@ -1,19 +1,258 @@
 \chapter{C\'odigo comentado}
-
-Iniciamos com limpeza das variáveis no \textit{workspace} e da tela.
-
-\begin{verbatim}
+\label{SectionCodigo}
+Iniciamos com limpeza das variáveis no \textit{workspace} e da tela. Também há configurações do script.
+\begin{minted}[mathescape, style = autumn,
+    frame = single, fontsize=\footnotesize]{matlab}
 clear all;
-    clc;
-\end{verbatim}
+clc;
+tol	=	0.00001;
+% Arquivo de dados da rede
+%P2GTD
+RedePequena
+% Mostrar graficos ao final do cálculo
+graf		=	'nao';
+% Número máximo de iterações permitido
+itmax		=	20;
+% Tensões mínima e máxima permitidas
+vmin = 0.0;
+vmax = 2.0;
+% Considerar cargas dependentes da tensão
+% Caso 'nao' -> modelo de potência constante
+% Caso 'sim' -> considerar modelos especificados pelo vetor ModeloCarga
+cargasV		=	'nao';
+% Conversão graus <-> radianos
+graus_to_rad = pi/180;
+rad_to_graus = 180/pi;
 
-\begin{minted}[mathescape, linenos]{matlab}
-if software ~= 'matlab' & software ~= 'octave'
-	fprintf('\n> Software (matlab/octave) especificado incorretamente.\n')
-    fprintf('  Ver arquivo <simulacao.m>.\n')
-    fprintf('> Execução interrompida.\n\n')
-    msgbox('Software (matlab/octave) especificado incorretamente. Ver arquivo <simulacao.m>. Execução interrompida.','Erro','error');
-        return
+%pneves: Enable debug prints.
+Debug = true; 
+\end{minted}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Carrega-se então, os valores da rede nas variáveis apropriadas.
+\begin{minted}[mathescape, style = autumn,
+    frame = single, fontsize=\footnotesize]{matlab}
+%Número - Tipo - V - Ângulo - Pg - Qg - Pc - Qc - bshk
+for k = 1:nb            %pneves: extracting bar values into arrays
+    numext(k)   = barras(k,1);                  
+    tipo(k)     = barras(k,2);                  
+    v(k)        = barras(k,3);                  
+    ang(k)      = barras(k,4) * graus_to_rad;   
+    pg(k)       = barras(k,5)/baseMVA; %pneves: PU 
+    qg(k)       = barras(k,6)/baseMVA;
+    pc(k)       = barras(k,7)/baseMVA;
+    qc(k)       = barras(k,8)/baseMVA;
+    bshk(k)     = barras(k,9)/baseMVA;
+        pnom(k)     = pg(k) - pc(k); %pneves: P liquido
+        qnom(k)     = qg(k) - qc(k); %pneves: Q liquido
+    numint(barras(k,1)) = k;
 end
+for l = 1:nr                %	Carregamento dos vetores de ramo
+	de(l)   = ramos(l,1);
+	para(l) = ramos(l,2);
+	r(l)    = ramos(l,3);
+	x(l)    = ramos(l,4);
+	bshl(l) = ramos(l,5)/2.; %shunt aqui é dividido por 2
+	tap(l)  = ramos(l,6);
+	fi(l)   = 0; %- ramos(l,7) * graus_to_rad;
+end
+fprintf('\n> Modelo de carga: potência constante (default).\n')
+\end{minted}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Neste ponto do código, será criada a matriz de admitância. A regra de formação dessa matriz está descrita em \ref{AdmitanciaElementosForaDiagonal} e \ref{AdmitanciaElementosDiagonal}. 
+\begin{minted}[mathescape, style = autumn,
+    frame = single, fontsize=\footnotesize]{matlab}
+%pneves: Matriz Y dimensionada para NBxNB
+Y = zeros(nb,nb);
+for k = 1:nb
+    Y(k,k) = i*bshk(k); %pneves: Cada Y(k,k) recebe 0+i*shunt
+end
+\end{minted}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Preenchimento da matriz admitância.\\
 
+\begin{minted}[mathescape, style = autumn,
+    frame = single, fontsize=\footnotesize]{matlab}
+for l = 1:nr %pneves: As formulas de formação da matriz
+    k = de(l)%estão no Tópico Matriz de Admitância  
+    m = para(l)
+    y(l) = 1/(r(l) + i*x(l))
+    akk(l) = 1/(tap(l)*tap(l))
+    amm(l) = 1.0
+    akm(l) = 1/tap(l)
+    Y(k,k) = Y(k,k) + akk(l)*y(l) + i*bshl(l)
+    Y(m,m) = Y(m,m) + amm(l)*y(l) + i*bshl(l)
+    Y(k,m) = Y(k,m) - akm(l)*y(l)
+    Y(m,k) = Y(m,k) - akm(l)*y(l)
+end
+G = real(Y); %pneves: matriz de condutância 
+B = imag(Y); %pneves: matriz de susceptância
+if (Debug == true) %pneves: Debug
+    fprintf('DEBUG> Y, G and B complete\n');
+    Y
+    G
+    B
+end
+\end{minted}
+Aqui será definido o estado inicial da rede, com $V = 1$ PU para barras $PQ$, com $\theta = 0$ para barras $PQ$ e $PV$. \textit{Flat guess}
+\begin{minted}[mathescape, style = autumn,
+    frame = single, fontsize=\footnotesize]{matlab}
+for k = 1:nb
+    if tipo(k) ~= 3
+        ang(k) = 0.0;
+        if tipo(k) < 2
+            v(k)= 1.0;
+        end
+    end
+end
+\end{minted}
+Calcula-se as Potências nodais.\\
+$pcalc(k)$ e $qcalc(k)$ são calculados para ganhar agilidade. Eles serão usados nos calculos de $H_{kk}, N_{kk}, M_{kk} e L_{kk}$, submatrizes da matriz Jacobiana \ref{Jacobiana}.\\
+\begin{minted}[mathescape, style = autumn,
+frame = single, fontsize=\footnotesize]{matlab}
+iter = 0;       %	Inicializar contador de iterações
+maxDP = 10^5;   %	Inicializar maiores mismatches
+maxDQ = 10^5;   
+while abs(maxDP) > tol | abs(maxDQ) > tol %	Processo iterativo 
+    %Cálculo das potências nodais
+    for k = 1:nb
+        pcalc(k) =  G(k,k)*v(k)*v(k);
+        qcalc(k) = -B(k,k)*v(k)*v(k);
+    end
+    for l = 1:nr
+        k = de(l);
+        m = para(l);
+        ab = ang(k) - ang(m) + fi(l);
+        gkm = akm(l)*real(y(l));
+        bkm = akm(l)*imag(y(l));
+        pcalc(k) = pcalc(k) + v(k)*v(m)*(-gkm*cos(ab)-bkm*sin(ab));
+        pcalc(m) = pcalc(m) + v(k)*v(m)*(-gkm*cos(ab)+bkm*sin(ab));
+        qcalc(k) = qcalc(k) + v(k)*v(m)*(-gkm*sin(ab)+bkm*cos(ab));
+        qcalc(m) = qcalc(m) - v(k)*v(m)*(-gkm*sin(ab)-bkm*cos(ab));
+    end
+\end{minted}
+%%%%%%%%%%%%%%%%%%%%%%%
+\begin{minted}[mathescape, style = autumn,
+    frame = single, fontsize=\footnotesize]{matlab}
+    %Cálculo dos mismatches de potência
+    DP = zeros(nb,1);
+    DQ = zeros(nb,1);
+    maxDP = 0;
+    maxDQ = 0;
+    busDP = 0;
+    busDQ = 0;
+
+    for k = 1:nb
+        pesp(k) = pnom(k);
+        qesp(k) = qnom(k);
+
+        if tipo(k) ~= 3
+            DP(k) = pesp(k) - pcalc(k);
+            if abs(DP(k)) > abs(maxDP)
+                maxDP = DP(k);
+                busDP = numext(k);
+            end
+        end
+        
+        if tipo(k) <= 1
+            DQ(k) = qesp(k) - qcalc(k);
+            if abs(DQ(k)) > abs(maxDQ)
+                maxDQ = DQ(k);
+                busDQ = numext(k);
+            end
+        end
+    end
+\end{minted}
+%%%%%%%%%%%%%%%%%%%%%%%
+\begin{minted}[mathescape, style = autumn,
+    frame = single, fontsize=\footnotesize]{matlab}
+    iteracao(iter+1) = iter;
+    mismP(iter+1) = abs(maxDP);
+    mismQ(iter+1) = abs(maxDQ);
+
+    DS = [ DP ; DQ ];
+
+    fprintf('\n> Iteração - %d\n',iter)
+    fprintf('  * Máximo mismatch P = %06.4f (barra %04d)\n',maxDP,busDP)
+    fprintf('  * Máximo mismatch Q = %06.4f (barra %04d)\n',maxDQ,busDQ)
+
+    if abs(maxDP) > tol | abs(maxDQ) > tol
+
+        %	Montar e inverter a matriz Jacobiana
+        H = zeros(nb,nb); M=H; N=H; L=H;
+
+        for k = 1:nb
+            H(k,k) = -qcalc(k) - v(k)*v(k)*B(k,k);
+            if tipo(k) == 3
+                H(k,k) = 10^10;
+            end
+            N(k,k) = ( pcalc(k) + v(k)*v(k)*G(k,k) )/v(k) ;
+            M(k,k) = pcalc(k) - v(k)*v(k)*G(k,k);
+            L(k,k) = ( qcalc(k) - v(k)*v(k)*B(k,k) )/v(k) ;
+            if tipo(k) >= 2
+                L(k,k) = 10^10;
+            end
+        end
+
+        for l = 1 : nr,
+              k = de(l) ;
+              m = para(l) ;
+
+              ab = ang(k) - ang(m) + fi(l) ;
+
+              H(k,m) =   v(k)*v(m)*( G(k,m)*sin(ab)-B(k,m)*cos(ab)) ;
+              H(m,k) =   v(k)*v(m)*(-G(k,m)*sin(ab)-B(k,m)*cos(ab)) ;
+              N(k,m) =   v(k)*(G(k,m)*cos(ab)+B(k,m)*sin(ab)) ;
+              N(m,k) =   v(m)*(G(k,m)*cos(ab)-B(k,m)*sin(ab)) ;
+              M(k,m) = - v(k)*v(m)*(G(k,m)*cos(ab)+B(k,m)*sin(ab)) ;
+              M(m,k) = - v(k)*v(m)*(G(k,m)*cos(ab)-B(k,m)*sin(ab)) ;
+              L(k,m) =   v(k)*(G(k,m)*sin(ab)-B(k,m)*cos(ab)) ;
+              L(m,k) = - v(m)*(G(k,m)*sin(ab)+B(k,m)*cos(ab)) ;
+        end
+
+        J = [ H N ; M L ];
+
+        %	Calcular o vetor de correção de estado
+
+        DV = inv(J)*DS;
+        
+
+        %	Atualizar estado
+        v = v + DV(nb+1:2*nb)';
+        ang = ang + DV(1:nb)';
+        
+\end{minted}
+%%%%%%%%%%%%%%%%%%%%%%%
+\begin{minted}[mathescape, style = autumn,
+    frame = single, fontsize=\footnotesize]{matlab}
+        %	Verificar se houve divergência
+        for k = 1:nb
+            if v(k) < vmin | v(k) > vmax
+                fprintf('\n> Tensões fora dos limites -> divergência.\n')
+                fprintf('> Execução interrompida.\n\n')
+                if graf == 'sim'
+                            graficos
+                end
+                msgbox('Tensões fora dos limites -> divergência. Execução interrompida.','Aviso','warn');
+                return
+            end
+        end
+\end{minted}
+%%%%%%%%%%%%%%%%%%%%%%%
+\begin{minted}[mathescape, style = autumn,
+    frame = single, fontsize=\footnotesize]{matlab}
+    %	Incrementar contador de iterações
+
+    iter = iter + 1;
+
+        if iter > itmax
+            fprintf('\n> Número máximo de iterações permitido foi excedido.\n')
+            fprintf('> Execução interrompida.\n\n')
+            if graf == 'sim'
+                graficos
+            end
+            msgbox('Número máximo de iterações permitido foi excedido. Execução interrompida.','Aviso','warn');
+            return
+        end
+    end
+end	% final do while
 \end{minted}

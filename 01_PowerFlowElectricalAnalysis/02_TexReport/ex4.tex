@@ -1,1 +1,16 @@
 \chapter{Discussões e an\'alise de resultados}
+\section{Composição do trabalho}
+Foi abordado neste trabalho uma introdução à teoria de Fluxo de Potência e um dos métodos de resolução bastante importante, o método de Newton. Ainda que sem muitas demonstrações matemáticas, todas as equações que geram o modelo matemático e os passos necessários para alimentar o método de resolução estão descritas podem ser vistas nos tópicos \ref{SectionIntro}, \ref{SectionFormula} e \ref{SectionNewton}.\\
+Já no capítulo \ref{SectionEstudosDeCaso}, pôde-se colocar as equações supracitadas em prática. Utilizando redes de referência, foi possivel comparar e validar seus resultados. Foi utilizado um modelo de rede bastante pequeno no início, apenas duas barras e um ramo (\ref{SectionRedePequena}) e todo o passo a passo foi verificado. A rede convergiu em 3 iterações e levou $0,0798s$\\
+Outra rede verificada, foi a de 14 barras e 20 ramos. Neste estudo não houve equacionamento por ser, praticamente, inviável calcular manualmente. A simulação convergiu após 4 iterações e levou $0,3942s$.\\
+\section{Performance}
+Comparando-se os dois casos, é notório que, com os aumentos de ramos e barras, a solução demorará mais para convergir. Ainda que nesse exemplo haja diferenças na tolerância da convergência, pode-se comprovar que com redes maiores, esse método apenas não trará resultados em prazos apropriados, ainda que a convergência aconteça.\\
+Lembrando que a comparação de performance aconteceu apenas temporalmente, pois a tolerância foi fixada previamente.
+\section{Trabalhos futuros}
+Nos trabalhos futuros, ainda nesta disciplina, será importante comparar dois fatores com os próximos métodos, o primeiro e bastante abordado aqui: o tempo de convergência e o número de interações.\\
+Ainda pode-se abordar a acuracia e robustês de cada solução. Basicamente, é necessário responder à seguinte pergunta: caso o palpite de solução inicial seja diferente do \textit{flat initial guess}, o método ainda apresenta convergência? 
+
+
+
+
+%é possível seguir a cada iteração de um código de referência.

@@ -10,6 +10,7 @@
 %\section{Introdução à Teoria}
 A ferramenta de an\'alise de sistemas de energia el\'etrica aqui discutida ser\'a a An\'alise de Fluxo de Pot\^encia. Essa an\'alise nos fornecer\'a um metodo de calculo de importantes grandezas de todo o sistema, a partir de algumas grandezas conhecidas, ou seja, que podem ser medidas.Esta \'e uma ferramenta aplicada \`a um sistema est\'atico.
 \section{Modelagem}
+\label{SectionIntro}
 Toda a rede ser\'a composta por ramos e barras, onde ramos s\~ao a representa\c{c}\~oes das linhas de transmiss\~ao e transformadores. As barras s\~ao n\'os do sistema e nesses pontos de interesse, pode-se medir fisicamente algumas grandezas, a depender do tipo de barra. S\~ao definidas quatro vari\'aveis \`a para cada n-ésima barra, correspondentes \`a tens\~ao e \`a inje\c{c}\~ao de
 pot\^encia nesta barra, $V_k$, magnitude da tens\~ao nodal, $\theta_k$ angulo da tens\~ao nodal, $P_k$ inje\c{c}\~ao l\'iquida de pot\^encia ativa e $Q_k$ inje\c{c}\~ao l\'iquida de pot\^encia reativa.As barras s\~ao divididas em categorias como na tabela \ref{t_PQPVSlack} de acordo com as grandezas conhecidas e incognitas.
 \begin{table}[]
@@ -28,7 +29,7 @@ Referência (Slack) & $V_k$,$\theta_k$ & $P_k$,$Q_k$& Barra de geração em gran
 
 
 \section{Formula\c{c}\~ao do problema b\'asico}
-
+\label{SectionFormula}
 \subsection{Injeção de potências}
 
 Seja uma rede de energia gen\'erica que cont\'em um n\'umero de barras \textit{(NB)} arbitr\'ario. Para cada barra, \'e poss\'ivel escrever duas equa\c{c}\~oes de inje\c{c}\~oes de pot\^encia, como em \ref{Pk} e \ref{Qk}.Elas são obtidas ao aplicar Lei de Kirchhoff das correntes em todas as $NB$ barras do sistema.\\
@@ -43,14 +44,15 @@ Seja uma rede de energia gen\'erica que cont\'em um n\'umero de barras \textit{(
 Portanto, em um sistema com \textit{NB} barras, \'e possivel obter $2.NB$ equa\c{c}\~oes.\\
 Neste problema, utilizaremos como variáveis de estado, ou seja, nosso conjunto de incognitas que descreverão o sistema, as variáveis $V$ e $\theta$, representados em \ref{Vs} e \ref{TetaS}. Com esses valores resolvidos, \'e possível calcular todas as injeções de potência em todas as barras.\\
 \begin{equation}
-    V^S = [V_1^S V_2^S V_3^S ... V_{NB}^S]^T
+    V^S  = \left[ \begin{matrix} V_1^S & V_2^S & V_3^S & ... & V_{NB}^S  \end{matrix} \right]^T 
     \label{Vs}
 \end{equation}
+
 \begin{equation}
-    \theta^S = [\theta_1^S \theta_2^S \theta_3^S ... \theta_1^S]^T
+    \theta^S  = \left[ \begin{matrix} \theta_1^S & \theta_2^S & \theta_3^S &... & \theta_1^S  \end{matrix} \right]^T 
     \label{TetaS}
 \end{equation}
-Para\\ 
+Quando \ref{Vs} e \ref{TetaS} forem resolvidas, será possivel aplicar em \ref{Pk} e \ref{Qk} para se obter \ref{Pk_s} e \ref{Qk_s}, que será as injeções de potência para o estado atual da rede.
 \begin{equation}
     P_k = V_k^S \sum_{m\in \kappa} V_m^S (G_{km} cos\theta_{km}^S + B_{km}sen\theta_{km}^S)
     \label{Pk_s}
@@ -60,7 +62,7 @@ Para\\
     \label{Qk_s}
 \end{equation}
 Problema consiste em obter o estado $(V^S,\theta^S)$.\\
-As equacoes de fluxo de carga serao:
+Com um simples algebrismo matemático, as equações \ref{Pk} e \ref{Qk} serão representas aqui como em \ref{Pk_balanceado} e \ref{Qk_balanceado}.
 \begin{equation}
     P_k - V_k \sum_{m\in \kappa} V_m (G_{km} cos\theta_{km} + B_{km}sen\theta_{km}) = 0
     \label{Pk_balanceado}
@@ -81,14 +83,14 @@ As equacoes de fluxo de carga serao:
 %do ponto de vista didático
 
 \subsection{Matriz de Admitância}
-Seja a matriz de admitância nodal $Y$ e ela se relacione com o vetor de tensões nodais $V$ e vetor de injeões de corrente nodais $I$ da forma como em \ref{Admitancia}.
+Seja a matriz de admitância nodal $Y$ e ela se relacione com o vetor de tensões nodais $V$ e vetor de injeções de corrente nodais $I$ da forma como em \ref{Admitancia}.
 \begin{equation}
     I = Y.V
     \label{Admitancia}
 \end{equation}
 A regra de formação dessa matriz $Y$ será dada por \ref{AdmitanciaElementosForaDiagonal} e \ref{AdmitanciaElementosDiagonal} (A dedução desse conjunto de formulas não será abordado neste trabalho).\\
-A dimensão da matriz $Y$ será de $NBxNB$.\\
-Para os elementos fora da diagonal principal, será o valor negativo da admintância série entre as duas barras, como em \ref{AdmitanciaElementosForaDiagonal}.
+A dimensão da matriz $Y$ será de $NB$x$NB$.\\
+Para os elementos fora da diagonal principal, será o valor negativo da admitância série entre as duas barras, como em \ref{AdmitanciaElementosForaDiagonal}.
 \begin{equation}
     Y_{km} = -y_{km}
     \label{AdmitanciaElementosForaDiagonal}
@@ -98,7 +100,7 @@ Para os elementos na diagonal principal, será a soma das admitâncias conectada
     Y_{kk} = \sum_{m\in \Omega_k} \left(y_{km} + j\frac{b^{sh}_{km}}{2}\right)
     \label{AdmitanciaElementosDiagonal}
 \end{equation}
-Ainda, a matriz $Y$ será dividida em parte real(\ref{G}) e parte imaginária (\ref{B}). Dando origem às matrizes de condutância $G$ e susceptância $B$.
+Ainda, a matriz $Y$ será dividida em parte real(\ref{G}) e parte imaginária (\ref{B}). Dando origem às matrizes de condutância $G$ e susceptância $B$, usadas nas equações de injeção de potência \ref{Pk} e \ref{Qk}.
 \begin{equation}
     G = \mathbb{R} (Y)
     \label{G}
@@ -136,9 +138,8 @@ Ainda, a matriz $Y$ será dividida em parte real(\ref{G}) e parte imaginária (\
 %na barra slack vc calcula P e Q
 
 \section{Formula\c{c}\~ao do m\'etodo de Newton}
-
-O algoritmo de Newton-Raphson é um método para calcular os zeros de funções reais de uma variável reais.\\
-Baseando em uma aproximação inicial arbitrada, $x^{(1)}$, tem-se \ref{Newton} para $n>1$.\footnote{https://www.ufrgs.br/reamat/CalculoNumerico/livro-sci/sdeduv-metodo\_de\_newton-raphson.html}
+\label{SectionNewton}
+O algoritmo de Newton é um método para calcular os zeros de funções reais de uma variável reais.Baseando em uma aproximação inicial arbitrada, $x^{(1)}$, tem-se \ref{Newton} para $n>1$.\footnote{https://www.ufrgs.br/reamat/CalculoNumerico/livro-sci/sdeduv-metodo\_de\_newton-raphson.html}
 \begin{equation}
     x^{x+1} = x^{n} - \frac{f(x^{(n)}}{f'(x^{(N)}} = x^{n} - \Delta x
     \label{Newton}
@@ -166,14 +167,14 @@ Onde:
     \item $\Delta P_k$ e $\Delta Q_k$ são chamados de mismatches ou resíduos de potência ativa e reativa. 
 
 \end{itemize}
-Em termos práticos, para a resolução do sistema de equações $g(x) = 0$ pelo método de Newton determinação do vetor de correção do estado $\Delta x$ a cada iteração. Para uma certa iteração  $\nu$, $\Delta x$ é obtido através de \ref{Newton_aplicado}.\\
+Em termos práticos, para a resolução do sistema de equações $g(x) = 0$ pelo método de Newton, é necessário a determinação do vetor de correção do estado $\Delta x$ a cada iteração. Para cada iteração  $\nu$, $\Delta x$ é obtido através de \ref{Newton_aplicado} e verificado se a convergência ocorreu, isto é, se $|\Delta_x| < Tol$.\\
 \begin{equation}
     g(x^\nu) = -J(x^\nu) . \Delta (x^\nu)
     \label{Newton_aplicado}
 \end{equation}
 Onde:\\
 \begin{equation}
-   g(x^\nu) = \left[ \begin{matrix} \Delta P^\nu \\ \Delta P^\nu  \end{matrix} \right] 
+   g(x^\nu) = \left[ \begin{matrix} \Delta P^\nu \\ \Delta Q^\nu  \end{matrix} \right] 
     \label{g_x_nu}
 \end{equation}
 \begin{equation}
@@ -243,4 +244,27 @@ As mastrizes H, N, M e L podem ter seus valores calculados utilizando as equaç�
             \end{array}\right.
     \label{L_resolvido}
 \end{equation}
+
+\section{Algoritmo implementado}
+
+Aqui será utilizado um algoritmo discutido nos slides do Professor Castro. \footnote{http://www.dsee.fee.unicamp.br/~ccastro/}
+
+\begin{enumerate}
+    \item   O contador de iterações é inicializado $\nu = 0$.   Escolhe-se condições de contorno iniciais para as magnitudes das tensões nodais nas barras $PQ$ e ângulos de fase das tensões nodais nas barras PQ e PV, onde não houver esse valor previamente estabelecido.
+            O vetor $x$ pode ser montado como em \ref{X}.
+            \begin{equation}
+            x  = \left[ \begin{matrix} \theta^0 & V^0  \end{matrix} \right]^T 
+            \label{X}
+            \end{equation}
+    \item   Calcula-se $P_k(V_\nu, \theta)$ para as barras $PQ$ e $PV$.\\
+            Calcula-se $Q_k(V_\nu, \theta_\nu)$ para as barras $PQ$.
+            Calcula-se os respectivos mismatches de potência \ref{delta_x_nu}.
+    \item   Testa-se a convergência: Se $max \{|\Delta P_k^\nu|\}_k=PQ$ , $PV\leq \varepsilon P$ e $max \{|\Delta Q_k^\nu|\}_k=PQ \leq \varepsilon P$\\
+            Então processo iterativo convergiu para a solução $[\theta ^\nu V^\nu]^T$. Pular para o passo $7$.\\
+            Senão, prosseguir para passo $4$.
+    \item   Calcula-se a matriz Jacobiana como em \ref{Jacobiana}
+    \item   Calcula-se os mismatches como em \ref{delta_x_nu} e determina-se nova solução $(V^{\nu + 1},\theta^{\nu + 1}$.
+    \item   Incrementa-se contador de iterações $\nu = \nu + 1$
+    \item   Calcula-se $P_k$ para a barra de referência e $Q_k$ para as barras de referência e PV.
+\end{enumerate}
 

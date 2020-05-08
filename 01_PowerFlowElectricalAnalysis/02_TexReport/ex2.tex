@@ -1,6 +1,6 @@
 \chapter{Estudos de caso}
 \label{SectionEstudosDeCaso}
-Neste capítulo, será estudado uma rede elementar (na seção \ref{SectionRedePequena}) e XXXXXXXXXXXXX redes maiores. Neste trabalho, a rede elementar tem um papel fundamental para compreensão de cada iteração do método, além de servir como calibração e teste para todas as modificações subsequentes. Para cada modificação no código de referência, ainda que pequena, deve ser retestado tendo a saída desta rede como parâmetro.
+Neste capítulo, será estudado uma rede elementar de 2 barras e 1 linha de transmissão (na seção \ref{SectionRedePequena}) e uma rede maior, de 14 barras e 20 ramos (na seção \ref{SectionRede14barras}). Neste trabalho, a rede elementar tem um papel fundamental para compreensão de cada iteração do método, além de servir como calibração e teste para todas as modificações subsequentes. Para cada modificação no código de referência, ainda que pequena, deve ser retestado tendo a saída desta rede como parâmetro.
 \section{Rede de 2 barras e 1 linha de transmissão}
 \label{SectionRedePequena}
 Considere a rede de duas barras e uma linha de transmissão \ref{FigRede2barras1linha}. Esse é o exemplo mais simples possível e foi apresentado e resolvido nos slides de aula.\\
@@ -189,11 +189,12 @@ Após 3 iterações, o método convergiu para solução com tolerância de $0,00
       1    2   -0.9904  0.0480    1.0000  0.0001    0.0096  0.0481
 > Tempo computacional =  0.0798 segundos.
 \end{minted}
-Note que na barra $2$, a tensão está como calculado em \ref{t_redePequenaResumo}. $E_2=1 \angle -2,8^o$.
+Note que na barra $2$, a tensão está como calculado na tabela \ref{t_redePequenaResumo}. $E_2=1 \angle -2,8^o$.
 
 
 
-\section{14 bus IEEE}
+\section{Rede 14 bus IEEE}
+\label{SectionRede14barras}
 Considere uma rede de 14 barras e 20 ramos. Este exemplo consta no código de referência e também pode ser encontrado no endereço: \href{https://labs.ece.uw.edu/pstca/pf14/pg\_tca14bus.htm}{https://labs.ece.uw.edu/pstca/pf14/pg\_tca14bus.htm}.\\
 Neste trabalho não haverá equacionamento manual desta rede pois seria muito extenso. Portanto, apresentaremos dados da simulação.\\
 Na figura \ref{FigRede14barras}, há a figura do estudo de caso de rede 14 barras e 20 ramos do IEEE.
@@ -203,6 +204,50 @@ Na figura \ref{FigRede14barras}, há a figura do estudo de caso de rede 14 barra
 \includegraphics[width=10cm]{figuras/14bus.jpg} 
 \label{FigRede14barras}
 \end{figure}
+
+\subsection{Entradas do software}
+Esta é a tabela de entradas com os parâmetros da rede, que foi disponibilizada pelo IEEE.
+\begin{minted}[mathescape, style = autumn,
+    frame = single, fontsize=\footnotesize]{matlab}
+nome_da_rede = '14 barras IEEE';
+baseMVA = 1.0; %pneves já está dividido por 100
+%	Número - Tipo - V - Ângulo - Pg - Qg - Pc - Qc - bshk
+barras =[ 1   3   1.00   0.00   0.00   0.00  0.00   0.000   0.00
+          2   2   1.00   0.00   0.00   0.00  0.217  0.127   0.00
+          3   2   1.00   0.00   0.00   0.00  0.942  0.190   0.00
+          4   0   1.00   0.00   0.00   0.00  0.478 -0.039   0.00
+          5   0   1.00   0.00   0.00   0.00  0.076  0.016   0.00
+          6   2   1.00   0.00   0.00   0.00  0.112  0.075   0.00
+          7   0   1.00   0.00   0.00   0.00  0.000  0.000   0.00
+          8   2   1.00   0.00   0.00   0.00  0.000  0.000   0.00
+          9   0   1.00   0.00   0.00   0.00  0.295  0.166   0.19
+         10   0   1.00   0.00   0.00   0.00  0.900  0.058   0.00
+         11   0   1.00   0.00   0.00   0.00  0.350  0.018   0.00
+         12   0   1.00   0.00   0.00   0.00  0.610  0.016   0.00
+         13   0   1.00   0.00   0.00   0.00  0.135  0.058   0.00
+         14   0   1.00   0.00   0.00   0.00  0.149  0.050   0.00];
+%	De - Para - r - x - bshl - tap - fi
+ramos=[1    5  0.05403   0.22304     0.0492  1.000  0.00
+       1    2  0.01938   0.05917     0.0528  1.000  0.00 
+       2    5  0.05695   0.17388     0.0346  1.000  0.00
+       2    4  0.05811   0.17632     0.0340  1.000  0.00
+       2    3  0.04699   0.19797     0.0438  1.000  0.00
+       3    4  0.06701   0.17103     0.0000  1.000  0.00
+       4    5  0.01335   0.04211     0.0000  1.000  0.00
+       4    7  0.00000   0.20912     0.0000  1.000  0.00
+       4    9  0.00000   0.55618     0.0000  1.000  0.00
+       5    6  0.00000   0.25202     0.0000  1.000  0.00
+       6   12  0.12291   0.25581     0.0000  1.000  0.00
+       6   13  0.06615   0.13027     0.0000  1.000  0.00
+       6   11  0.09498   0.19890     0.0000  1.000  0.00
+       7    9  0.00000   0.11001     0.0000  1.000  0.00
+       7    8  0.00000   0.17615     0.0000  1.000  0.00
+       9   10  0.03181   0.08450     0.0000  1.000  0.00
+       9   14  0.12711   0.27038     0.0000  1.000  0.00
+      10   11  0.08205   0.19207     0.0000  1.000  0.00
+      12   13  0.22092   0.19988     0.0000  1.000  0.00
+      13   14  0.17093   0.34802     0.0000  1.000  0.00];
+\end{minted}
 
 \subsection{Solução por software}
 É possivel notar que com tolerância = $0.000001pu$, a rede convergiu para solução em 4 iterações, em $0.39s$

@@ -1,0 +1,94 @@
+%DO NOT INCLUDE THIS FILE
+%COMMENTS AND TODOS
+
+%Cap4
+%pag 3 equação errada pois algumas das variáveis já sabemos. 
+%Objetivo -> Determinar V, Theta
+%NPQ -> Barra de carga
+%NPV -> Barra de geração
+%Numero de variaveis = Numero de incognitas e equações LI
+%Gkm condutâncias
+%Bkm aceptancias 
+%que vem da matriz de admitancia
+%Pag 8
+%
+%1 barra de referencia
+%PQ barra de carga
+%PV barra com geração
+%Angulos conhecidos -> só na barra de referencia - Tetha: 2,3,4
+%tensões nas barras V: 2 , 4
+%Pag 11
+%v - numero de iterações
+%Pag 15
+%equações das matrizes jacobianas
+%Observar a dimensão das matrizes
+%H e L são quadradas e sao simetricas - se existe H23 existe H32, mas não são necessariamente iguais
+%Pag 17 Exemplo 
+%Matriz jacobiana
+%Pag 18
+%Todas as injeções de P ativa e reativa - todos os angulos e todas as tensõe
+%linhas
+%1 derivasd p1
+%2 derivada p2
+%3 derivada p3
+%4 derivada q1
+%5 derivada q2
+%6 derivada q3
+%colunas 
+%...
+%elemento 3,4 -> diz respeito derivadad de p3 com relação a v1
+%linha g(x) 
+%Coluna delta (x)
+%Pag 19
+%Para J^-1 , onde tem infinito vai a 0
+%
+%Critérios de convergência
+%24/apr/2020
+%Matlab
+%loadflow_v3.m - P2GTD.m
+%potencia em kva
+%lendo o numero de colunas da rede
+%nb,colunas size
+%nr, colunas size
+
+%ler info das barras
+%for k = 1:nb
+%*tudo dividido pela potencia de base pra transformar em PU
+
+%pnom = potencia gerada - consumida
+%numint(barras(k,1)) = k; bobeira
+
+%Lendo info dos ramos
+%for L = 1:nr
+%shunt bsh1 dividido por 2
+%ler posição do tap
+
+%montagem da matriz admitancia
+
+%cria uma matriz de zeros, Y (nr, nb)
+
+%Shunts de barra - Verifica em todas as barras onde tem caps, na diagonal Y(k,k) = i*bshk(k)
+
+%Varredura pelos ramos
+%calcula admitancia y
+%Equações são as da matriz de admitancia no slide (??)
+%Chutar valores 
+%se for do tipo v theta, 
+%se for pv, chute valor para teta
+%pq, chute v e teta
+%chute flat, angulo 0 e v 1
+%Calculo das potencias nodais
+%para cada barra tem um p calc e um q calc
+%varredura pelos ramos
+%***Definição de injeção de potencia: é o somatório dos fluxos dos ramos
+
+%...
+
+%Estar atentos as dimensões das matrizes
+%Calculo das injeções de potencia e matriz jacobiana - numero de ramos não de barras
+
+
+
+%para o trabalho descoplado pagina 40
+
+%pode ser o desacoplado rápido, ou o normal

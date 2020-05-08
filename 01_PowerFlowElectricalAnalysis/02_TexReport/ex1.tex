@@ -8,11 +8,11 @@
 %Para  como um todo \'e necessario que tenhamos ferramentas que nos ajudem a estimar o estado da rede 
 
 %\section{Introdução à Teoria}
-A ferramenta de an\'alise de sistemas de energia el\'etrica aqui discutida ser\'a a An\'alise de Fluxo de Pot\^encia. Essa an\'alise nos fornecer\'a um metodo de calculo de importantes grandezas de todo o sistema, a partir de algumas grandezas conhecidas, ou seja, que podem ser medidas.Esta \'e uma ferramenta aplicada \`a um sistema est\'atico.
+A ferramenta de an\'alise de sistemas de energia el\'etrica aqui discutida ser\'a a An\'alise de Fluxo de Pot\^encia. Essa an\'alise nos fornecer\'a um metodo de cálculo de importantes grandezas de todo o sistema, a partir de algumas grandezas conhecidas, ou seja, que podem ser medidas. Esta \'e uma ferramenta aplicada \`a um sistema est\'atico. \cite{monticelli}
 \section{Modelagem}
 \label{SectionIntro}
-Toda a rede ser\'a composta por ramos e barras, onde ramos s\~ao a representa\c{c}\~oes das linhas de transmiss\~ao e transformadores. As barras s\~ao n\'os do sistema e nesses pontos de interesse, pode-se medir fisicamente algumas grandezas, a depender do tipo de barra. S\~ao definidas quatro vari\'aveis \`a para cada n-ésima barra, correspondentes \`a tens\~ao e \`a inje\c{c}\~ao de
-pot\^encia nesta barra, $V_k$, magnitude da tens\~ao nodal, $\theta_k$ angulo da tens\~ao nodal, $P_k$ inje\c{c}\~ao l\'iquida de pot\^encia ativa e $Q_k$ inje\c{c}\~ao l\'iquida de pot\^encia reativa.As barras s\~ao divididas em categorias como na tabela \ref{t_PQPVSlack} de acordo com as grandezas conhecidas e incognitas.
+Toda a rede ser\'a composta por ramos e barras, onde ramos s\~ao a representa\c{c}\~oes das linhas de transmiss\~ao e transformadores. As barras s\~ao n\'os do sistema e nesses pontos de interesse, pode-se medir fisicamente algumas grandezas, a depender do tipo de barra. S\~ao definidas quatro vari\'aveis \`a para cada k-ésima barra, correspondentes \`a tens\~ao e \`a inje\c{c}\~ao de
+pot\^encia nesta barra, $V_k$, magnitude da tens\~ao nodal, $\theta_k$ angulo da tens\~ao nodal, $P_k$ inje\c{c}\~ao l\'iquida de pot\^encia ativa e $Q_k$ inje\c{c}\~ao l\'iquida de pot\^encia reativa. As barras s\~ao divididas em categorias como na tabela \ref{t_PQPVSlack} de acordo com as grandezas conhecidas e suas incognitas.
 \begin{table}[]
 \caption{Categoria das barras de acordo com variáveis conhecidas}
 \begin{tabular}{@{}llll@{}}
@@ -32,7 +32,7 @@ Referência (Slack) & $V_k$,$\theta_k$ & $P_k$,$Q_k$& Barra de geração em gran
 \label{SectionFormula}
 \subsection{Injeção de potências}
 
-Seja uma rede de energia gen\'erica que cont\'em um n\'umero de barras \textit{(NB)} arbitr\'ario. Para cada barra, \'e poss\'ivel escrever duas equa\c{c}\~oes de inje\c{c}\~oes de pot\^encia, como em \ref{Pk} e \ref{Qk}.Elas são obtidas ao aplicar Lei de Kirchhoff das correntes em todas as $NB$ barras do sistema.\\
+Seja uma rede de energia gen\'erica que cont\'em um n\'umero de barras \textit{(NB)} arbitr\'ario. Para cada barra, \'e poss\'ivel escrever duas equa\c{c}\~oes de inje\c{c}\~oes de pot\^encia, como em \ref{Pk} e \ref{Qk}. Elas são obtidas ao aplicar Lei de Kirchhoff das correntes em todas as $NB$ barras do sistema.\\
 \begin{equation}
     P_k = V_k \sum_{m\in \kappa} V_m (G_{km} cos\theta_{km} + B_{km}sen\theta_{km})
     \label{Pk}
@@ -139,7 +139,7 @@ Ainda, a matriz $Y$ será dividida em parte real(\ref{G}) e parte imaginária (\
 
 \section{Formula\c{c}\~ao do m\'etodo de Newton}
 \label{SectionNewton}
-O algoritmo de Newton é um método para calcular os zeros de funções reais de uma variável reais.Baseando em uma aproximação inicial arbitrada, $x^{(1)}$, tem-se \ref{Newton} para $n>1$.\footnote{https://www.ufrgs.br/reamat/CalculoNumerico/livro-sci/sdeduv-metodo\_de\_newton-raphson.html}
+O algoritmo de Newton é um método para calcular os zeros de funções reais de uma variável reais. Baseando em uma aproximação inicial arbitraria, $x^{(1)}$, tem-se \ref{Newton} para $n>1$. \cite{newton}
 \begin{equation}
     x^{x+1} = x^{n} - \frac{f(x^{(n)}}{f'(x^{(N)}} = x^{n} - \Delta x
     \label{Newton}
@@ -247,10 +247,10 @@ As mastrizes H, N, M e L podem ter seus valores calculados utilizando as equaç�
 
 \section{Algoritmo implementado}
 
-Aqui será utilizado um algoritmo discutido nos slides do Professor Castro. \footnote{http://www.dsee.fee.unicamp.br/~ccastro/}
+Aqui será utilizado um algoritmo discutido nos slides do Professor Castro. \cite{castro}.
 
 \begin{enumerate}
-    \item   O contador de iterações é inicializado $\nu = 0$.   Escolhe-se condições de contorno iniciais para as magnitudes das tensões nodais nas barras $PQ$ e ângulos de fase das tensões nodais nas barras PQ e PV, onde não houver esse valor previamente estabelecido.
+    \item   O contador de iterações é inicializado $\nu = 0$.   Escolhe-se condições de contorno iniciais para as magnitudes das tensões nodais nas barras $PQ$ e ângulos de fase das tensões nodais nas barras $PQ$ e $PV$, onde não houver esse valor previamente estabelecido.
             O vetor $x$ pode ser montado como em \ref{X}.
             \begin{equation}
             x  = \left[ \begin{matrix} \theta^0 & V^0  \end{matrix} \right]^T 
@@ -263,8 +263,8 @@ Aqui será utilizado um algoritmo discutido nos slides do Professor Castro. \foo
             Então processo iterativo convergiu para a solução $[\theta ^\nu V^\nu]^T$. Pular para o passo $7$.\\
             Senão, prosseguir para passo $4$.
     \item   Calcula-se a matriz Jacobiana como em \ref{Jacobiana}
-    \item   Calcula-se os mismatches como em \ref{delta_x_nu} e determina-se nova solução $(V^{\nu + 1},\theta^{\nu + 1}$.
-    \item   Incrementa-se contador de iterações $\nu = \nu + 1$
-    \item   Calcula-se $P_k$ para a barra de referência e $Q_k$ para as barras de referência e PV.
+    \item   Calcula-se as correções resolvendo o sistema \ref{HNML_eq} e determina-se nova solução $(V^{\nu + 1},\theta^{\nu + 1})$
+    \item   Incrementa-se contador de iterações $\nu = \nu + 1$ e volta-se ao passo 2.
+    \item   Calcula-se $P_k$ para a barra de referência e $Q_k$ para as barras de referência e $PV$.
 \end{enumerate}
 

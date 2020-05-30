@@ -18,7 +18,7 @@ fprintf('\n')
 fprintf('> ---------------------------------\n')
 fprintf('> Loadflow                         \n')
 fprintf('> Fluxo de carga - método de Newton\n')
-fprintf('> DESACOPLADO                      \n')
+fprintf('> DESACOPLADO - Diferenciado       \n')
 fprintf('> Pedro Henrique Neves dos Santos  \n')
 fprintf('> pneves                           \n')
 fprintf('> Baseado em software prof. Castro \n')
@@ -30,7 +30,7 @@ fprintf('> Carregando dados da simulação ...\n')
 %pneves: Some script configs
 
 %tol		=	0.001; 
-%tol	=	0.001;
+%tol	=	0.00001;
 
 %addpath('/01_PowerFlowTestCases/');
 
@@ -263,8 +263,8 @@ while abs(maxDP) > tol | abs(maxDQ) > tol
             
             
             
-            
-            DP(k) = pesp(k) - pcalc(k);
+            %pneves:different version. Slide Pag37
+            DP(k) = (pesp(k) - pcalc(k))/v(k);
             
             
             
@@ -277,7 +277,9 @@ while abs(maxDP) > tol | abs(maxDQ) > tol
         end
         
         if tipo(k) <= 1
-            DQ(k) = qesp(k) - qcalc(k);
+            %pneves:different version. Slide Pag37
+            DQ(k) = (qesp(k) - qcalc(k))/v(k);
+            
             if abs(DQ(k)) > abs(maxDQ)
                 maxDQ = DQ(k);
                 busDQ = numext(k);
@@ -301,13 +303,16 @@ while abs(maxDP) > tol | abs(maxDQ) > tol
         H = zeros(nb,nb); M=H; N=H; L=H;
 
         for k = 1:nb
-            H(k,k) = -qcalc(k) - v(k)*v(k)*B(k,k);
+            %pneves:different version. Slide Pag37
+            H(k,k) = -qcalc(k)/v(k) - v(k)*B(k,k);
             if tipo(k) == 3
                 H(k,k) = 10^10;
             end
             %N(k,k) = ( pcalc(k) + v(k)*v(k)*G(k,k) )/v(k) ;
             %M(k,k) = pcalc(k) - v(k)*v(k)*G(k,k);
-            L(k,k) = ( qcalc(k) - v(k)*v(k)*B(k,k) )/v(k) ;
+            
+            %pneves:different version. Slide Pag37
+            L(k,k) = qcalc(k)/(v(k)*v(k))-B(k,k);
             if tipo(k) >= 2
                 L(k,k) = 10^10;
             end
@@ -318,15 +323,16 @@ while abs(maxDP) > tol | abs(maxDQ) > tol
               m = para(l) ;
 
               ab = ang(k) - ang(m) + fi(l) ;
-
-              H(k,m) =   v(k)*v(m)*( G(k,m)*sin(ab)-B(k,m)*cos(ab)) ;
-              H(m,k) =   v(k)*v(m)*(-G(k,m)*sin(ab)-B(k,m)*cos(ab)) ;
+              
+              %pneves:different version. Slide Pag37
+              H(k,m) =   v(m)*( G(k,m)*sin(ab)-B(k,m)*cos(ab)) ;
+              H(m,k) =   -v(m)*(G(k,m)*sin(ab)+B(k,m)*cos(ab)) ;
               %N(k,m) =   v(k)*(G(k,m)*cos(ab)+B(k,m)*sin(ab)) ;
               %N(m,k) =   v(m)*(G(k,m)*cos(ab)-B(k,m)*sin(ab)) ;
               %M(k,m) = - v(k)*v(m)*(G(k,m)*cos(ab)+B(k,m)*sin(ab)) ;
               %M(m,k) = - v(k)*v(m)*(G(k,m)*cos(ab)-B(k,m)*sin(ab)) ;
-              L(k,m) =   v(k)*(G(k,m)*sin(ab)-B(k,m)*cos(ab)) ;
-              L(m,k) = - v(m)*(G(k,m)*sin(ab)+B(k,m)*cos(ab)) ;
+              L(k,m) =   (G(k,m)*sin(ab)-B(k,m)*cos(ab)) ;
+              L(m,k) =  -(G(k,m)*sin(ab)+B(k,m)*cos(ab)) ;
         end
 
         iter

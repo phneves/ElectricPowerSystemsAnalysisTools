@@ -29,12 +29,12 @@ fprintf('> Carregando dados da simulação ...\n')
 %pneves: Some script configs
 
 %tol		=	0.001; 
-tol	=	0.000001;
+%tol	=	0.00001;
 
 %addpath('/01_PowerFlowTestCases/');
 
 %   Arquivo de dados da rede
-P2GTD
+%P2GTD
 %RedePequena
 %RedePequena2
 %Twobus
@@ -55,7 +55,7 @@ fprintf('\n> %s\n', nome_da_rede);
 graf		=	'nao';
 
 %	Número máximo de iterações permitido
-itmax		=	20;
+itmax		=	100;
 
 %	Tensões mínima e máxima permitidas
 vmin = 0.0;
@@ -247,8 +247,13 @@ while abs(maxDP) > tol | abs(maxDQ) > tol
             
             %pneves: pcalc saved to plot after
             pcalc_path(iter+1,k) = pcalc(k);
-            pcalc_time(iter+1,k)=toc;
+            pcalc_time(iter+1,k) = toc;
             pcalc_k(iter+1,k)=k;
+            
+            qcalc_path(iter+1,k) = qcalc(k);
+            qcalc_time(iter+1,k) = toc;
+            qcalc_k(iter+1,k)=k;
+            
             
             DP(k) = pesp(k) - pcalc(k);
             if abs(DP(k)) > abs(maxDP)

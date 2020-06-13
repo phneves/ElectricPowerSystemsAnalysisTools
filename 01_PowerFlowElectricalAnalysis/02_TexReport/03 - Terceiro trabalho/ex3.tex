@@ -1,0 +1,156 @@
+\chapter{C\'odigo comentado}
+\label{SectionCodigo}
+
+Os códigos fonte desse trabalho bem como histórico de modificação, podem ser encontrados no endereço: \textit{\href{https://github.com/phneves/ElectricPowerSystemsAnalysisTools}{https://github.com/phneves/ElectricPowerSystemsAnalysisTools}}.
+\section{Entradas e configurações}
+Iniciamos com limpeza das variáveis no \textit{workspace} e da tela. Também há configurações do script.
+\begin{minted}[mathescape, style = autumn,
+    frame = single, fontsize=\footnotesize]{matlab}
+clear all;
+clc;
+tic; % iniciando contagem de tempo computacional
+%   Arquivo de dados da rede
+Rede_4_barras_valida
+%   Conversão graus <-> radianos
+graus_to_rad = pi/180;
+rad_to_graus = 180/pi;
+%pneves: Enable debug prints.
+%pneves: Better to use breakpoints.Used here to didactic purposes
+Debug = true;
+%	Determinacao do tamanho da rede
+fprintf('\n> Processando dados da rede ...\n')
+%pneves: nb and nr are varibles of interest.
+%pneves: variable colunas won't be used. 
+[nb , colunas] = size(barras);
+[nr , colunas] = size(ramos);
+\end{minted}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Carrega-se então, os valores da rede nas variáveis apropriadas. Vetores receberão dados das barras.
+\begin{minted}[mathescape, style = autumn,
+    frame = single, fontsize=\footnotesize]{matlab}
+%Número - Tipo - V - Ângulo - Pg - Qg - Pc - Qc - bshk
+for k = 1:nb            %pneves: extracting bar values into arrays
+    numext(k)   = barras(k,1);                  
+    tipo(k)     = barras(k,2);                  
+    v(k)        = barras(k,3);                  
+    ang(k)      = barras(k,4) * graus_to_rad;   
+    pg(k)       = barras(k,5)/baseMVA; %pneves: PU 
+    qg(k)       = barras(k,6)/baseMVA;
+    pc(k)       = barras(k,7)/baseMVA;
+    qc(k)       = barras(k,8)/baseMVA;
+    bshk(k)     = barras(k,9)/baseMVA;
+        pnom(k)     = pg(k) - pc(k); %pneves: P liquido
+        qnom(k)     = qg(k) - qc(k); %pneves: Q liquido
+    numint(barras(k,1)) = k;
+end
+\end{minted}
+%%%%%%%%%%%%%%%%%%%%%%%
+Vetores receberão dados dos ramos.
+%FALAR COMO É CALCULADO OS MISMATCHES
+\begin{minted}[mathescape, style = autumn,
+    frame = single, fontsize=\footnotesize]{matlab}
+for l = 1:nr                %	Carregamento dos vetores de ramo
+	de(l)   = ramos(l,1);
+	para(l) = ramos(l,2);
+	r(l)    = ramos(l,3);
+	x(l)    = ramos(l,4);
+	bshl(l) = ramos(l,5)/2.; %shunt aqui é dividido por 2
+	tap(l)  = ramos(l,6);
+	fi(l)   = 0; %- ramos(l,7) * graus_to_rad;
+end
+fprintf('\n> Modelo de carga: potência constante (default).\n')
+\end{minted}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Neste ponto do código, será criada a matriz de admitância. A regra de formação dessa matriz está descrita em \ref{AdmitanciaElementosForaDiagonal} e \ref{AdmitanciaElementosDiagonal}. 
+\begin{minted}[mathescape, style = autumn,
+    frame = single, fontsize=\footnotesize]{matlab}
+%pneves: Matriz Y dimensionada para NBxNB
+Y = zeros(nb,nb);
+for k = 1:nb
+    Y(k,k) = i*bshk(k); %pneves: Cada Y(k,k) recebe 0+i*shunt
+end
+\end{minted}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Preenchimento da matriz admitância.
+\begin{minted}[mathescape, style = autumn,
+    frame = single, fontsize=\footnotesize]{matlab}
+for l = 1:nr %pneves: As formulas de formação da matriz
+    k = de(l)%estão no Tópico Matriz de Admitância  
+    m = para(l)
+    %pneves: resistência será desprezada nesse problema
+    %y(l) = 1/(r(l) + i*x(l)) 
+    y(l) = 1/(-i*x(l)) 
+    Y(k,k) = Y(k,k) + y(l)
+    Y(m,m) = Y(m,m) + y(l)
+    Y(k,m) = Y(k,m) - y(l)
+    Y(m,k) = Y(m,k) - y(l)
+end
+G = real(Y); %pneves: matriz de condutância
+B = imag(Y); %pneves: matriz de susceptância
+if (Debug == true) %pneves: Debug
+    fprintf('DEBUG> Y, G and B complete\n');
+    Y
+    G
+    B
+end
+\end{minted}
+A matriz $G$ será composta por 0, já que a resistência foi desprezada e a matriz $B$ originará a matriz $B'$.
+\begin{minted}[mathescape, style = autumn,
+    frame = single, fontsize=\footnotesize]{matlab}
+%%
+%pneves: Montando a matriz B'
+Blinha = B;
+P=pnom;
+for k = 1:nb
+    if tipo(k) == 3
+        %pneves: retira a linha da barra slack
+        Blinha(k,:) = []
+        %pneves: retira a coluna da barra slack
+        Blinha(:,k) = []
+        %pneves: retira a linha da barra slack
+        P(k,:) = []
+    end
+end
+\end{minted}
+Matriz $\theta$ é calculada, como descrito em \ref{Pk_linearizado_InjecaoLiquida_Matricial_Transposta}. 
+\begin{minted}[mathescape, style = autumn,
+    frame = single, fontsize=\footnotesize]{matlab}
+%pneves: Calculando a matriz Teta
+Theta = inv(Blinha)*P
+%pneves: Adicionando a barra de referência na matriz Theta
+IndexTheta=1;
+for k = 1:nb
+    if tipo(k) == 3
+        ThetaWithReferenceBar(k,1) = 0;
+    else
+        ThetaWithReferenceBar(k,1) = Theta(IndexTheta,1);
+        IndexTheta = IndexTheta + 1;
+    end
+end
+%pneves: Convertendo de radianos para graus
+ThetaGraus=Theta*rad_to_graus
+\end{minted}
+Por fim, os fluxos de potência são calculados, como em \ref{FigFluxoPotenciaLinearizado}.
+\begin{minted}[mathescape, style = autumn,
+    frame = single, fontsize=\footnotesize]{matlab}
+%%
+%'Fim do cálculo de fluxo de carga Linearizado');
+ 
+fprintf('\n> Fim do cálculo de fluxo de carga.
+                Preparando relatório de saída ...\n')
+for l = 1:nr
+    k = de(l);
+    m = para(l);
+    pkm(l) = (ThetaWithReferenceBar(k)- ThetaWithReferenceBar(m))/x(l);
+end
+%	Relatório final
+fprintf('\n\n> Relatório final\n\n')
+fprintf('> Rede: %s\n',nome_da_rede)
+fprintf('\n> Fluxos de potência\n\n')
+fprintf('     De Para       Pkm \n')
+
+for l = 1:nr
+	fprintf('%7d %4d %9.4f \n',de(l),para(l),pkm(l))
+end
+
+\end{minted}

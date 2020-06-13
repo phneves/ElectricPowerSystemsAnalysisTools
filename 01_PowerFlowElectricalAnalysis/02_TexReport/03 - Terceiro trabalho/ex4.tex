@@ -1,0 +1,9 @@
+\chapter{Discussões e an\'alise de resultados}
+\section{Composição do trabalho}
+Neste trabalho, foi abordado uma introdução à teoria de Fluxo de Potência e o método linearizado ou fluxo de carga C.C. É baseado no acoplamento das variáveis $P$ e $\theta$, como visto na seção \ref{SecaoMetodoLinearizado}. Quanto maiores os níveis de tensão da rede, maior também será este acoplamento.\\
+O fluxo de carga linearizado é bastante leve, do ponto de vista computacional, portanto é útil para etapas preliminares de estudos de planejamento da expansão de redes elétricas, onde é necessário simulação de um número elevado de cenários. \\
+Também tem importantes aplicações em análises do mercado de energia elétrica, estudos de custos de transmissão e analise de segurança da operação, onde é possivel estudar cenários de violação de limites operacionais.\\
+Contudo, deve-se deixar claro que, apesar de ser bastante útil nessas situações aqui descritas, a análise de fluxo de carga linearizado não substitui o fluxo de carga C.A.
+\section{Performance}
+Foi visto, no capítulo \ref{SectionEstudosDeCaso}, o estudo de uma rede pequena com 4 barras e 4 ramos. O estudo levou em conta apenas uma possibilidade, mas como não há iterações nem risco de divergência, pode-se estudar dezenas de cenários em poucos segundos, enriquecendo a análise.\\
+Deve-se atentar para o nível de tensão do sistema, já que não é aplicavel para em sistemas de distribuição e em sistemas com relação $\frac{X}{R}$ baixa (por exemplo $\frac{X}{R} << 1$) e a solução será tão melhor quanto maior for o nível de tensão \cite{raphael}.

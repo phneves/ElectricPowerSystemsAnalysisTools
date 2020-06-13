@@ -1,0 +1,189 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% The following comments were written in Portuguese, because this 
+% template applies only for School of Technology at University 
+% of Campinas, Brazil.
+%
+% Este é um modelo Latex para monografias de Trabalhos de Conclusão 
+% de Curso (TCC) na graduação, monografias de Mestrado e Teses de 
+% doutorado da Faculdade de Tecnologia (FT) da Universidade 
+% Estadual de Campinas (UNICAMP).
+%
+% Esse modelo e seu respectivo arquivo de classe de documento 
+% foram adaptado do modelo de teses e dissertações do 
+% Instituto de Computação da UNICAMP.
+%
+% Autor: André Leon Sampaio Gradvohl, Dr.
+% Email:        gradvohl@ft.unicamp.br
+% Lattes CV:    http://lattes.cnpq.br/9343261628675642
+% ORCID:        0000-0002-6520-9740
+% 
+% Última versão: 24/Março/2019
+%
+% Adições/Alterações nesta última versão 
+% - Alteração da fonte padrão (times) para fonte libertine, mais 
+%   adequada do que a Times New Roman para teses, mas ainda
+%   compatível com a times.
+% - Adição de comandos para abreviações especiais, e.g., i.e. e
+%   p.ex., respectivamente \eg , \ie , \pex
+% - Adição do pacote booktabs para tabelas.
+% - Ajustes nas referências bibliográficas de acordo com a norma 
+%   ABNT NBR 6023 de 14/11/2018.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% Escolha: Portugues ou Ingles ou Espanhol.
+% Para a versão final do texto, acrescente a palavra "Final",
+% como na segunda linha abaixo da próxima.
+%\documentclass[Portugues]{tese-FT}
+\documentclass[Portugues,Final]{tese-FT}
+%\documentclass[Ingles]{tese-FT}
+%\documentclass[Espanhol,Final]{tese-FT}
+
+%Adicione seu arquivo com as referências bibliográficas
+\addbibresource{bibliografia.bib}
+
+%O pacote a seguir gera um dummy text. Elimine a linha quando
+% for editar seu texto.
+%\usepackage{lipsum}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%User packages
+
+\usepackage{soul}
+\usepackage{cancel}
+\newcommand\tab[1][1cm]{\hspace*{#1}}
+\usepackage{amsmath}
+\usepackage{minted}
+\usepackage{booktabs}
+\usepackage{cancel}
+\usepackage{enumitem}
+\usepackage{subfig}
+
+
+
+% Adicione o pacote a seguir, se seu texto tiver uma lista de 
+% símbolos. Não confunda com a lista de abreviaturas.
+%\usepackage[symbols,nogroupskip,sort=none]{glossaries-extra}
+
+\begin{document}
+
+% Escolha entre autor ou autora:
+\autor{Pedro Henrique Neves dos Santos}
+%\autora{Nome da Autora}
+
+% Sempre deve haver um título em português:
+\titulo{IT306W - Fluxo de carga linearizado}
+
+% Se a língua for o inglês ou o espanhol defina:
+%\title{The Dissertation or Thesis Title in English or Spanish for FT}
+
+% Escolha entre orientador ou orientadora e inclua os títulos:
+\orientador{Prof. Dr. Nome do Orientador}
+%\orientadora{Profa. Dra. Nome da Orientadora}
+
+% Escolha entre coorientador ou coorientadora, se houver, 
+% e inclua os títulos:
+%\coorientador{Prof. Dr. Eng. Lic. Nome do Co-Orientador}
+%\coorientadora{Prof. Dra. Eng. Lic. Nome da Co-Orientadora}
+
+% Escolha entre uma das quatro opções a seguir (comente as demais):
+%\bsi         % para Trabalho de Conclusão de Curso em BSI
+%\tads       % para Trabalho de Conclusão de Curso em TADS
+%\qualificacaoMestrado  % Para textos de qualificação de mestrado.
+%\qualificacaoDoutorado % Para textos de qualificação de doutorado.
+\mestrado   % para Dissertação de Mestrado em Tecnologia
+%\doutorado  % para Tese de Doutorado em Tecnologia
+
+%Defina a área de concentração. Se for TCC, deixe comentado
+\areaConcentracao{Sistemas de Informação e Comunicação}
+%\areaConcentracao{Ambiente}
+%\areaConcentracao{Ciência dos Materiais}
+
+% Se houve cotutela, defina:
+%\cotutela{Universidade Nova de Plutão}
+
+%Defina a data da defesa no formato {Dia}{Mês}{Ano}
+\datadadefesa{13}{05}{2020}
+
+% Para a versão final defina:
+% Repita o nome do Orientador(a) no primeiro avaliador
+%\avaliadorA{Prof. Dr. Nome do Orientador}{FT/UNICAMP}
+%\avaliadorB{Profa. Dra. Segunda Avaliadora}{Instituição da segunda avaliadora}
+\avaliadorC{Dr. Terceiro Avaliador}{Instituição do terceiro avaliador}
+% \avaliadorD{Prof. Dr. Quarto Avaliador}{Instituição do quarto avaliador}
+% \avaliadorE{Prof. Dr. Quinto Avaliador}{Instituição do quinto avaliador}
+% \avaliadorF{Prof. Dr. Sexto Avaliador}{Instituição do sexto avaliador}
+% \avaliadorG{Prof. Dr. Sétimo Avaliador}{Instituição do sétimo avaliador}
+% \avaliadorH{Prof. Dr. Oitavo Avaliador}{Instituição do oitavo avaliador}
+
+
+% Para incluir a ficha catalográfica em PDF na versão final, 
+% copie o arquivo PDF, descomente e ajuste a linha a seguir:
+%\fichacatalografica{arquivo.pdf}
+
+% Este comando deve ficar aqui:
+\paginasiniciais
+% Sempre deve haver um resumo em português:
+\begin{resumo}
+
+%Primeiro trabalho apresentado \`a disciplina IT306.\\\\\
+Neste terceiro trabalho, será abordado uma simplicação no método utilizado no trabalho anterior. O fluxo de carga linearizado, ou CC.\\\\
+Os códigos fonte desse trabalho bem como histórico de modificação, podem ser encontrados no endereço: \href{https://github.com/phneves/ElectricPowerSystemsAnalysisTools}{https://github.com/phneves/ElectricPowerSystemsAnalysisTools}
+
+
+
+\end{resumo}
+
+
+% A lista de símbolos é opcional. Não confunda a lisa de símbolos
+% com a lista de abreviaturas.
+%\input{listaSimbolos}
+
+% A lista de abreviações e siglas vem a seguir.
+% Dê uma olhada no pacote nomencl para ver os comandos para 
+% adicionar abreviações e siglas no texto.
+\renewcommand{\nomname}{Lista de Abreviações e Siglas}
+\printnomenclature[3cm]
+
+
+% O sumário vem aqui:
+\tableofcontents
+\fimdaspaginasiniciais
+
+
+% O corpo da dissertação ou tese começa aqui:
+%
+% O comando a seguir inclui o arquivo introducao.tex
+% que contém o capítulo de Introdução. 
+% Detalhe: não precisa incluir a extensão .tex
+%\include{introducao}
+
+
+\include{ex1}
+
+\include{ex2}
+
+\include{ex3}
+
+\include{ex4}
+
+%\include{ex5}
+
+%\include{ex6}
+
+% Os comandos para incluir as referências bibliográficas
+\begin{singlespacing}
+\setlength\bibitemsep{10pt}   % Adiciona uma linha em branco entre duas referências
+\printbibliography[heading=bibintoc, % Adiciona no sumário
+                   title={Referências bibliográficas} % Nome do Capítulo
+                  ]
+\end{singlespacing}
+
+% Os anexos, se houver, vêm depois das referências:
+%\appendix
+
+% O comando a seguir inclui o arquivo apendices.tex
+% que contém os apêndices. Observe o comando \appendix
+% na linha anterior
+% Detalhe: não precisa incluir a extensão .tex
+%\include{apendices}
+
+\end{document}

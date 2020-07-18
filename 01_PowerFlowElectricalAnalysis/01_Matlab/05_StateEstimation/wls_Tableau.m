@@ -1,8 +1,9 @@
 % Power System State Estimation using Weighted Least Square Method..
 clc;
 clear;
+tic;
 
-num = 30; % IEEE - 14 or IEEE - 30 bus system..(for IEEE-14 bus system replace 30 by 14)...
+num = 14; % IEEE - 14 or IEEE - 30 bus system..(for IEEE-14 bus system replace 30 by 14)...
 ybus = ybusppg(num); % Get YBus..
 zdata = zdatas(num); % Get Measurement data..
 bpq = bbusppg(num); % Get B data..
@@ -267,3 +268,7 @@ for m = 1: nbus
     fprintf('%4g', m); fprintf('  %8.4f', V(m)); fprintf('   %8.4f', Del(m)); fprintf('\n');
 end
 disp('---------------------------------------------');
+
+tempo = toc; % terminando contagem de tempo computacional
+
+fprintf('\n\n> Tempo computacional = %7.4f segundos.',tempo)

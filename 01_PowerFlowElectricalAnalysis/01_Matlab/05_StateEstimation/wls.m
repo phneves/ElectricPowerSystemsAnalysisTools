@@ -1,5 +1,7 @@
+clc;
+clear;
+tic;
 % Power System State Estimation using Weighted Least Square Method..
-
 num = 14; % IEEE - 14 or IEEE - 30 bus system..(for IEEE-14 bus system replace 30 by 14)...
 ybus = ybusppg(num); % Get YBus..
 zdata = zdatas(num); % Get Measurement data..
@@ -218,7 +220,8 @@ while(tol > 1e-4)
     end
     
     % Measurement Jacobian, H..
-    H = [H11 H12; H21 H22; H31 H32; H41 H42; H51 H52];
+    H = [H11 H12; H21 H22; H31 H32; H41 H42; H51 H52]
+    
     
     % Gain Matrix, Gm..
     Gm = H'*inv(Ri)*H;
@@ -248,3 +251,7 @@ for m = 1:nbus
     fprintf('%4g', m); fprintf('  %8.4f', V(m)); fprintf('   %8.4f', Del(m)); fprintf('\n');
 end
 disp('---------------------------------------------');
+
+tempo = toc; % terminando contagem de tempo computacional
+
+fprintf('\n\n> Tempo computacional = %7.4f segundos.',tempo)
